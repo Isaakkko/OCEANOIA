@@ -1,0 +1,4 @@
+"NOTEBOOKS/*.h5" 
+"MODELS/*.h5" 
+"*.h5" 
+"DATA/" 
