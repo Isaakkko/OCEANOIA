@@ -2,3 +2,5 @@
 "MODELS/*.h5" 
 "*.h5" 
 "DATA/" 
+"NOTEBOOKS/Prueba_CNN.ipynb" 
+"NOTEBOOKS/02_CNN_Especies.ipynb" 
