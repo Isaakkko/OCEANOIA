@@ -75,7 +75,7 @@ IMAGE_SIZE = (224, 224)  # tamaño usado al entrenar la CNN
 # =====================================================================
 # TABLA DE ESPECIES: traducción + estado legal + recomendación
 #
-# ⚠️ Los valores de "estado_legal" y "recomendacion" son PLACEHOLDERS.
+# Los valores de "estado_legal" y "recomendacion" son PLACEHOLDERS.
 # El modelo CNN solo predice la especie — esta información no sale del modelo,
 # hay que completarla con datos oficiales reales (ej. INCOPESCA en Costa Rica)
 # antes de usar esto en producción. El dataset de entrenamiento (Kaggle "A Large
@@ -309,7 +309,7 @@ def predecir_oceanografia(lat: float, lon: float, timezone_: str = "auto") -> di
 
 def preprocesar_imagen(image_bytes: bytes) -> np.ndarray:
     """
-    IMPORTANTE: el modelo se entrenó con cv2.imread(), que lee en BGR (no RGB),
+    el modelo se entrenó con cv2.imread(), que lee en BGR (no RGB),
     y nunca se convirtió a RGB antes de entrenar. Por eso aquí también usamos cv2
     para mantener el mismo orden de canales — si se usara RGB por error, el
     modelo vería los colores "invertidos" respecto a lo que aprendió.
