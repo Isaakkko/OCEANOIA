@@ -219,7 +219,9 @@ def _moon_phase_fraction(dt):
 
 
 def _build_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Replica exactamente el preprocesamiento del notebook de entrenamiento."""
+    """
+    Replica exactamente el preprocesamiento del notebook de entrenamiento.
+    """
     df = df.copy()
 
     df["wave_dir_sin"] = np.sin(np.deg2rad(df["wave_direction"]))
@@ -386,7 +388,9 @@ def predict_oceanografia(
     lon: float = Query(..., description="Longitud de la zona, ej. -84.90"),
     timezone: str = Query("auto", description="Timezone para Open-Meteo, 'auto' detecta según lat/lon"),
 ):
-    """Descarga las últimas 72h reales de datos y devuelve el pronóstico de las próximas 72h."""
+    """
+    Descarga las últimas 72h reales de datos y devuelve el pronóstico de las próximas 72h
+    """
     try:
         return predecir_oceanografia(lat, lon, timezone)
     except ValueError as e:

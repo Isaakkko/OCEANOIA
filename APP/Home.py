@@ -40,9 +40,8 @@ st.set_page_config(
 
 
 def llamar_api(metodo: str, path: str, **kwargs):
-    """Llama a la API y devuelve (response, None) o (None, mensaje_de_error).
-
-    No lanza excepciones: los tabs solo tienen que chequear si error is None.
+    """
+    Llama a la API y devuelve (response, None) o (None, mensaje_de_error).
     """
     kwargs.setdefault("timeout", 30)
     try:
@@ -60,7 +59,9 @@ def llamar_api(metodo: str, path: str, **kwargs):
 
 
 def mostrar_error_api(resp: requests.Response) -> None:
-    """Muestra el detalle de un error HTTP de la API (4xx/5xx) de forma legible."""
+    """
+    Muestra el detalle de un error HTTP de la API de forma legible.
+    """
     try:
         detalle = resp.json().get("detail", resp.text)
     except ValueError:
@@ -78,7 +79,9 @@ def api_esta_arriba() -> bool:
 
 @st.cache_data(ttl=600, show_spinner=False)
 def obtener_comparativo_zonas():
-    """Consulta /oceanografia/predict para las 7 zonas y devuelve (DataFrame, lista_de_zonas_con_error)."""
+    """
+    Consulta /oceanografia/predict para las 7 zonas
+    """
     filas, errores = [], []
     for zona, (lat, lon) in ZONAS_CR.items():
         resp, error = llamar_api(
@@ -119,9 +122,10 @@ if "historial_pronosticos" not in st.session_state:
 
 # ===================== Especies de referencia por zona =====================
 # Conocimiento público sobre pesca en Costa Rica -- NO sale de la CNN (que
-# identifica especies de un dataset distinto, no nativas de CR) ni de ningún
-# dataset del proyecto. Es contenido de referencia: verificar con INCOPESCA
-# antes de cualquier uso real, igual que estado_legal/recomendacion.
+# identifica especies de un dataset distinto, no nativas de CR)
+
+# Es contenido de referencia: verificar con INCOPESCA
+
 ESPECIES_POR_ZONA = {
     "golfo_nicoya": ["Corvina reina", "Pargo mancha", "Tortuga marina (protegida)"],
     "golfo_dulce": ["Pargo mancha", "Corvina reina", "Tiburón martillo (veda)"],
