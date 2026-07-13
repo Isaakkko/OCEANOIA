@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+opencv-python
+joblib
+numpy
+pandas
+requests
+tensorflow
+keras>=3.15.0
+scikit-learn
+streamlit
+folium
+streamlit-folium
+plotly

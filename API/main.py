@@ -29,11 +29,13 @@ from tensorflow.keras.models import load_model
 # CONFIGURACIÓN GENERAL
 # =====================================================================
 
-MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODELS_DIR = os.path.join(REPO_ROOT, "MODELS")
+NOTEBOOKS_DIR = os.path.join(REPO_ROOT, "NOTEBOOKS")
 
 RNN_MODEL_PATH = os.path.join(MODELS_DIR, "modelo_forecast_oceanografico.keras")
 SCALER_PATH = os.path.join(MODELS_DIR, "scaler_forecast_oceanografico.pkl")
-CNN_MODEL_PATH = os.path.join(MODELS_DIR, "modelo_CNN_espe.keras")
+CNN_MODEL_PATH = os.path.join(NOTEBOOKS_DIR, "modelo_CNN_espe.keras")
 
 # Variables que usa el modelo oceanográfico. El orden importa: debe coincidir
 # exactamente con el orden usado al entrenar, o el scaler/modelo van a recibir
