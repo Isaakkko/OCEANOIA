@@ -8,8 +8,8 @@ Modelos que necesita, en la carpeta models/ (junto a este archivo):
     - scaler_forecast_oceanografico.pkl
     - modelo_CNN_espe.keras
 
-Correr con:  uvicorn main:app --reload
-Documentación interactiva:  http://127.0.0.1:8000/docs
+Correr con (desde la raíz del repo):
+    uvicorn API.main:app --reload
 """
 
 import os
@@ -76,13 +76,6 @@ IMAGE_SIZE = (224, 224)  # tamaño usado al entrenar la CNN
 
 # =====================================================================
 # TABLA DE ESPECIES: traducción + estado legal + recomendación
-#
-# Los valores de "estado_legal" y "recomendacion" son PLACEHOLDERS.
-# El modelo CNN solo predice la especie — esta información no sale del modelo,
-# hay que completarla con datos oficiales reales (ej. INCOPESCA en Costa Rica)
-# antes de usar esto en producción. El dataset de entrenamiento (Kaggle "A Large
-# Scale Fish Dataset") viene de mercados/aguas de Turquía, así que además conviene
-# verificar que la especie/variante exacta sea la misma que se regula localmente.
 # =====================================================================
 
 CLASES_ORDENADAS = [
@@ -96,52 +89,54 @@ CLASES_ORDENADAS = [
     "Striped Red Mullet",
     "Trout",
 ]
+# IMPORTANTE
+# la gran mayoría no existen de forma silvestre en las costas de Costa Rica por ser propias del mar Mediterráneo, el Atlántico europeo o zonas templadas.
 
 ESPECIES_INFO = {
     "Black Sea Sprat": {
         "nombre_es": "Espadín del Mar Negro", "nombre_cientifico": "Clupeonella cultriventris",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "pesca deportiva y con devolución obligatoria",
+        "recomendacion": "Extraerlos del agua para consumo o comercialización está prohibido por ley",
     },
     "Gilt-Head Bream": {
         "nombre_es": "Dorada", "nombre_cientifico": "Sparus aurata",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "Pezclable con licencia de pesca obligatoria",
+        "recomendacion": "Pezcar en Pacífico Norte, Central y Sur",
     },
     "Hourse Mackerel": {
         "nombre_es": "Chicharro / Jurel", "nombre_cientifico": "Trachurus trachurus",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "No existe en las aguas de Costa Rica",
+        "recomendacion": "Especie considerada de consumo, prohibido vender los filetes si fueron capturados con licencia deportiva",
     },
     "Red Mullet": {
         "nombre_es": "Salmonete de Roca", "nombre_cientifico": "Mullus barbatus",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "No existe en las aguas de Costa Rica",
+        "recomendacion": "Totalmente legal.",
     },
     "Red Sea Bream": {
         "nombre_es": "Besugo", "nombre_cientifico": "Pagellus bogaraveo",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "No existe en las aguas de Costa Rica",
+        "recomendacion": "Totalmente legal.",
     },
     "Sea Bass": {
         "nombre_es": "Róbalo Europeo", "nombre_cientifico": "Dicentrarchus labrax",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "No existe en las aguas de Costa Rica",
+        "recomendacion": "Generalmente no se permite retener ejemplares menores a los 50-60 centímetros",
     },
     "Shrimp": {
         "nombre_es": "Camarón", "nombre_cientifico": "Penaeus spp.",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": " legal únicamente bajo regulaciones comerciales estrictas(INCOPESCA)",
+        "recomendacion": "Pezcar en Pacífico Central, Sur y Caribe Norte",
     },
     "Striped Red Mullet": {
         "nombre_es": "Salmonete de Fango", "nombre_cientifico": "Mullus surmuletus",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "No existe en las aguas de Costa Rica",
+        "recomendacion": "Totalmente legal.",
     },
     "Trout": {
         "nombre_es": "Trucha", "nombre_cientifico": "Oncorhynchus mykiss / Salmo trutta",
-        "estado_legal": "PLACEHOLDER — verificar regulación local",
-        "recomendacion": "PLACEHOLDER — verificar talla mínima y veda antes de publicar",
+        "estado_legal": "5 piezas por persona con una longitud mínima de 25 cm",
+        "recomendacion": " Arroyos y ríos de Cerro de la Muerte, especialmente en la zona de San Gerardo de Dota",
     },
 }
 
@@ -313,8 +308,10 @@ def preprocesar_imagen(image_bytes: bytes) -> np.ndarray:
     """
     el modelo se entrenó con cv2.imread(), que lee en BGR (no RGB),
     y nunca se convirtió a RGB antes de entrenar. Por eso aquí también usamos cv2
-    para mantener el mismo orden de canales — si se usara RGB por error, el
-    modelo vería los colores "invertidos" respecto a lo que aprendió.
+    para mantener el mismo orden de canales.
+
+    si se usara RGB el modelo vería los colores "invertidos" respecto a lo que aprendió.
+
     """
     file_bytes = np.frombuffer(image_bytes, np.uint8)
     imagen = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)  # decodifica en BGR
@@ -348,7 +345,7 @@ def predecir_especie(image_bytes: bytes) -> dict:
         "nombre_cientifico": info["nombre_cientifico"],
         "confianza": round(confianza, 4),
         "estado_legal": info["estado_legal"],
-        "recomendacion": info["recomendacion"],
+        "recomendacion": info.get("recomendacion", "Sin información registrada"),
         "top3": top3,
     }
 
