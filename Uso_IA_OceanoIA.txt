@@ -1,0 +1,64 @@
+Prompts usados para el proyecto 2 de inteligencia artificial aplicada 
+Jeffrey Jimenez 
+Felipe Montenegro
+Jefferson Granados
+Isaac Ulloa 
+
+
+1. Estoy trabajando en un proyecto de clasificación de especies de peces con CNN,
+usando el dataset "A Large Scale Fish Dataset" de Kaggle (crowww/a-large-scale-fish-dataset).
+
+Contexto del dataset:
+- Lo descargo con kagglehub: kagglehub.dataset_download("crowww/a-large-scale-fish-dataset")
+- La estructura de carpetas es anidada: ruta_base/Fish_Dataset/Fish_Dataset/especie/especie/imagen.png
+- Cada especie tiene una subcarpeta "GT" con siluetas que NO debo incluir, solo las imágenes reales
+- Hay 9 especies de peces
+
+Necesito código en Python que:
+1. Recorra las carpetas y cargue todas las imágenes en un array de NumPy, con sus
+   etiquetas (nombre de especie) en un array paralelo
+2. Redimensione todas las imágenes a 224x224 (para la CNN)
+3. Maneje el caso de imágenes corruptas o ilegibles sin que el proceso falle
+4. Divida los datos en train/test (80/20) de forma estratificada por especie,
+   con random_state fijo para reproducibilidad
+5. Incluya una verificación visual: mostrar una imagen de ejemplo (con la
+   conversión de color correcta, ya que uso cv2 que lee en BGR)
+6. Incluya un análisis de balance de clases: conteo de imágenes por especie
+   y un gráfico de barras
+7. Muestre un grid de 3x3 con una imagen representativa de cada especie
+8. Incluya estadísticas básicas de una imagen (dimensiones, rango de valores
+   de píxeles, promedio) para verificar que los datos se cargaron correctamente
+
+Se usó para generar código de una tarea bien definida (cargar imágenes, hacer split), no para tomar las decisiones de diseño.
+El prompt fue específico, basado en el conocimiento previo de la estructura real del dataset (carpetas anidadas, carpeta GT).
+
+
+2.Necesito ayuda para construir un modelo RNN (LSTM) que prediga condiciones oceanográficas de las próximas 24-72 horas para una zona específica (lat/lon), usando la Open-Meteo Marine API (gratuita, sin API key) para oleaje/marea/SST, y la Historical Forecast API de Open-Meteo para viento/presión
+
+	Ayudó a entender por qué el modelo fallaba, no solo a arreglarlo. Cuando las predicciones salían mal, en vez de solo dar una solución, explicó la causa — por ejemplo, que el modelo estaba prediciendo casi siempre el mismo valor en vez de seguir los cambios reales de los datos.
+	Ayudó a que el modelo entendiera mejor los patrones naturales. Por ejemplo, se dieron cuenta de que la marea no sube y baja según la hora del reloj normal, sino según el ciclo de la luna — y una vez que se le enseñó eso al modelo específicamente, aprendió a predecir la marea mucho mejor.
+	Ayudó a probar ideas de forma ordenada. Cada vez que se cambiaba algo (la arquitectura, cuántos datos usar, cómo entrenar), se comparaba el resultado antes y después, para saber si el cambio realmente ayudaba o no — en vez de cambiar cosas al azar esperando que mejorara.
+
+
+
+3.Ya audité el repo y sé exactamente qué está roto. Quiero que arregles SOLO estos
+puntos bloqueantes, uno por uno, y me muestres el diff de cada archivo antes de
+pasar al siguiente:
+
+En API/main.py: corregí las rutas de los modelos para que apunten a donde
+   realmente están los archivos (MODELS/ en mayúscula desde la raíz del repo,
+   no API/models/ relativo). Mostrame el diff.
+
+ Corregí CNN_MODEL_PATH en API/main.py para que apunte a donde está realmente
+   modelo_CNN_espe.keras (NOTEBOOKS/, no models/).
+
+ Generá un requirements.txt con las dependencias reales que usa el código
+   (tensorflow, fastapi, streamlit, folium, uvicorn, etc. — revisá los imports
+   reales, no asumas versiones).
+Decime si falta algo más para que la API levante sin errores.
+
+Este prompt funciona bien porque va directo a los tres bloqueantes que realmente impiden que la API levante —las rutas de los modelos, el path del CNN y las dependencias— sin distraerse en la limpieza cosmética (gitignore, duplicados, typos) que puede esperar. Pedir el diff de cada archivo antes de seguir al siguiente mantiene el control que buscabas desde el inicio: nada se acepta a ciegas, vos ves exactamente qué cambió en cada paso. Y cerrar con "decime si falta algo más" es una buena red de seguridad, en vez de asumir que con esos tres puntos ya está resuelto todo.
+
+4. Convierte las etiquetas de texto a números usando LabelEncoder de sklearn, ajustándolo (fit_transform) solo con y_train y aplicando el mismo mapeo (transform) a y_test, para que no haya fuga de información entre conjuntos.
+
+La codificación de etiquetas fue un paso necesario porque los modelos de redes neuronales no pueden trabajar directamente con texto como "Trout" o "Shrimp" ya que internamente todo el proceso de entrenamiento se basa en operaciones numéricas por lo que las etiquetas de clase deben transformarse primero a números y luego a formato one-hot antes de poder usarse con una capa de salida softmax y una función de pérdida categorical crossentropy

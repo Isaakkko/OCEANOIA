@@ -1,14 +1,12 @@
 """
 API de Predicción Oceanográfica y Clasificación de Especies
 =============================================================
-Todo en un solo archivo: carga de modelos, preprocesamiento, y los dos endpoints.
-
 Modelos que necesita, en la carpeta models/ (junto a este archivo):
     - modelo_forecast_oceanografico.keras
     - scaler_forecast_oceanografico.pkl
     - modelo_CNN_espe.keras
 
-Correr con (desde la raíz del repo):
+Correr con:
     uvicorn API.main:app --reload
 """
 

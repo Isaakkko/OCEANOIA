@@ -1,13 +1,5 @@
 """
-Home.py
-=======
-App Streamlit de OceanoIA con cuatro pestañas:
-  1. 📷 Identificador de especies (CNN, vía API)
-  2. 🌊 Pronóstico oceánico (RNN, vía API)
-  3. 🗺️ Mapa de recomendaciones (reglas + Folium)
-  4. 📊 Dashboard combinado
-
-Ejecutar (desde la raíz del repo):
+Ejecutar:
     streamlit run APP/Home.py
 """
 
